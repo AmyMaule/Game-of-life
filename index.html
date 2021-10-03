@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game of Life</title>
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="game-container">
+    <div class="info-container">
+      <h1 class="heading">The Game of Life</h1>
+      <p class="description">The <a href="https://en.wikipedia.org/wiki/Conway's_Game_of_Life" target="_blank">Game of Life</a> is a cellular automaton devised by John Horton Conway, made up of a grid of cells, each of which is in one of two possible states, alive or dead. Each cell interacts with its neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions occur:</p>
+      <ul class="rules">
+        <li>Any live cell with fewer than two live neighbours dies, as if by underpopulation.</li>
+        <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+        <li>Any live cell with more than three live neighbours dies, as if by overpopulation.</li>
+        <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+      </ul>
+    </div>
+    <div class="game-grid"></div>
+    <div class="btn-container">
+      <button class="btn start-btn">Start</button>
+      <button class="btn pause-btn">Pause</button>
+      <button class="btn reset-btn">Reset</button>
+      <span class="speed-label">Speed:</span>
+      <span class="speed">Slow</span>
+      <input type="range" min="1" max="1000" value="100" class="speed-range" id="speed">
+      <span class="speed">Fast</span>
+    </div>
+    <div class="controls-container">
+      <div class="density-container">
+        <select class="select-density">
+          <option value="none" selected>Cell Density</option>
+          <option value="low">Low Density</option>
+          <option value="med">Med Density</option>
+          <option value="high">High Density</option>
+        </select>
+        <select class="select-cell-size">
+          <option value="none" selected>Cell Size</option>
+          <option value="3">Extra Small</option>
+          <option value="5">Small</option>
+          <option value="7">Medium</option>
+          <option value="9">Large</option>
+          <option value="10">Extra Large</option>
+        </select>
+        <button class="btn generate-new">Generate</button>
+      </div>
+      <div class="num-generations">0 generations</div>
+    </div>
+  </div>
+</body>
+</html>
