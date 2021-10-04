@@ -43,13 +43,10 @@ body {
 }
 
 .game-grid {
-  width: 100px;
   margin-top: 5px;
-  /* height: 500px; */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  border: 2px solid rgb(90, 63, 14);
 }
 
 .row {
@@ -57,6 +54,7 @@ body {
 }
 
 .cell {
+  box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
   height: 8px;

@@ -17,11 +17,13 @@ let generations = 0;
 let running = false;
 let speed = 100;
 let numColumns = 100;
-let numRows = 50;
+let numRows = 60;
 
 // must fill with .fill(null) or else they'll be undefined
-let cells = new Array(numRows).fill(null).map(() => new Array(numColumns).fill(null));
+let cells;
 const createCells = () => {
+  cells = new Array(numRows).fill(null).map(() => new Array(numColumns).fill(null));
+  console.log(numColumns, numRows);
   for (let i = 0; i < numRows; i++) {
     let row = document.createElement("div");
     row.classList.add("row");
@@ -42,19 +44,34 @@ const createCells = () => {
 createCells();
 
 // Allow cells to be clickable
-let flattened = cells.flat();
-flattened.forEach(cell => {
-  cell.addEventListener("click", () => {
-    if (cell.classList.contains("alive")) {
-      cell.classList.remove("alive");
-      cell.classList.add("dead");
-    } else {
-      cell.classList.remove("dead");
-      cell.classList.add("alive");
-    }
+let flattened;
+const flattenCells = () => {
+  console.log(cells);
+  flattened = cells.flat();
+  flattened.forEach(cell => {
+    cell.addEventListener("click", () => {
+      if (cell.classList.contains("alive")) {
+        cell.classList.remove("alive");
+        cell.classList.add("dead");
+      } else {
+        cell.classList.remove("dead");
+        cell.classList.add("alive");
+      }
+    })
   })
-})
+}
+flattenCells();
 
+// As the styling gives the border only to the left and bottom edges of each cell so as to avoid overlapping borders, this function just adds a top border to the top row of cells and a right border to the right column of cells
+const styleOuterCells = () => {
+  cells.map((row, i) => {
+      row.map((cell, j) => {
+        if (i === 0) cell.style.borderTop = "1px solid rgb(90, 63, 14)";
+        if (j === row.length-1) cell.style.borderRight = "1px solid rgb(90, 63, 14)";
+      })
+    })
+}
+styleOuterCells();
 
 const countNeighbours = (x, y) => {
   if (x === 0 && y === 0) {   // top left
@@ -84,24 +101,13 @@ const checkStatus = () => {
       let getXY = cell.dataset.position.split(",")
       let x = Number(getXY[0]);
       let y = Number(getXY[1]);
-
       let neighbours = countNeighbours(x, y);
-      // console.log(x, y);
-      // console.log(neighbours);
       let livingNeighbours = 0;
       neighbours.map(neighbour => {
-        // if ((cells[neighbour[0]][neighbour[1]]).classList.contains("check")) console.log("duplicate:", (cells[neighbour[0]][neighbour[1]]));
-        // cells[neighbour[0]][neighbour[1]].classList.add("check");
-        // console.log(cell);
-        // console.log(neighbour[0], neighbour[1]);
         if (cells[neighbour[0]][neighbour[1]].classList.contains("alive")) {
           livingNeighbours++;
-          // cells[neighbour[0]][neighbour[1]].classList.add("check");
         }
       })
-      // console.log(cell);
-      // console.log(livingNeighbours);
-
       // All live cells with 2 or 3 living neighbours survives
       if (cell.classList.contains("alive") && livingNeighbours > 1 && livingNeighbours < 4) {
         // console.log(cell);
@@ -113,7 +119,6 @@ const checkStatus = () => {
       // Otherwise, the cell will die or stay dead
       } else cell.classList.add("will-die");
     })
-
   })
 }
 
@@ -163,11 +168,20 @@ const reset = () => {
 }
 resetBtn.addEventListener("click", reset);
 
+// Left off here, going to change number of cells based on cell size so they keep the same overall height and width
 const determineCellSize = () => {
-  let cellSize = Number(selectCellSize.value) + "px";
-  flattened.forEach(cell => {
-    cell.style.width = cellSize;
-    cell.style.height = cellSize;
+  gameGrid.innerHTML = "";
+  let cellSize = Number(selectCellSize.value);
+  let totalWidth = 750;
+
+  numColumns = parseInt(totalWidth / cellSize);
+  numRows = parseInt(totalWidth / cellSize * 0.6);
+
+  createCells();
+  flattenCells();
+  flattened.map(cell => {
+    cell.style.width = cellSize + "px";
+    cell.style.height = cellSize + "px";
   })
 }
 
@@ -206,3 +220,4 @@ speedRange.addEventListener("input", () => {
 
 
 // TODO responsive design for smaller screens
+// TODO add fill all and empty and let user know they can click cells
