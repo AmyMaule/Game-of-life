@@ -21,6 +21,7 @@
       </ul>
     </div>
     <div class="game-grid"></div>
+    <p class="click-text">Click to select/de-select cells before starting the simulation, or while it is paused</p>
     <div class="btn-container">
       <button class="btn start-btn">Start</button>
       <button class="btn pause-btn">Pause</button>
@@ -41,13 +42,18 @@
         <select class="select-cell-size">
           <option value="none" selected>Cell Size</option>
           <option value="4">Small</option>
-          <option value="7">Medium</option>
+          <option value="7">Medium (default)</option>
           <option value="10">Large</option>
           <option value="15">Extra Large</option>
         </select>
         <button class="btn generate-new">Generate</button>
       </div>
       <div class="num-generations">0 generations</div>
+      <div class="break"></div>
+      <div class="extra-controls">
+        <button class="btn erase-btn">Erase All</button>
+        <button class="btn invert-btn">Invert Cells</button>
+      </div>
     </div>
   </div>
 </body>

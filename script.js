@@ -3,27 +3,28 @@
 // Any dead cell with three live neighbours becomes a live cell.
 // All other live cells die in the next generation. Similarly, all other dead cells stay dead.
 
-let gameGrid = document.querySelector(".game-grid");
-let startBtn = document.querySelector(".start-btn");
-let pauseBtn = document.querySelector(".pause-btn");
-let resetBtn = document.querySelector(".reset-btn");
-let numGenerations = document.querySelector(".num-generations");
-let generateNew = document.querySelector(".generate-new");
-let speedRange = document.querySelector(".speed-range");
-let selectDensity = document.querySelector(".select-density");
-let selectCellSize = document.querySelector(".select-cell-size");
+const gameGrid = document.querySelector(".game-grid");
+const startBtn = document.querySelector(".start-btn");
+const pauseBtn = document.querySelector(".pause-btn");
+const resetBtn = document.querySelector(".reset-btn");
+const numGenerations = document.querySelector(".num-generations");
+const generateNew = document.querySelector(".generate-new");
+const speedRange = document.querySelector(".speed-range");
+const selectDensity = document.querySelector(".select-density");
+const selectCellSize = document.querySelector(".select-cell-size");
+const eraseBtn = document.querySelector(".erase-btn");
+const invertBtn = document.querySelector(".invert-btn");
 
 let generations = 0;
 let running = false;
 let speed = 100;
-let numColumns = 100;
-let numRows = 60;
+let numColumns = 107;
+let numRows = 64;
 
 // must fill with .fill(null) or else they'll be undefined
 let cells;
 const createCells = () => {
   cells = new Array(numRows).fill(null).map(() => new Array(numColumns).fill(null));
-  console.log(numColumns, numRows);
   for (let i = 0; i < numRows; i++) {
     let row = document.createElement("div");
     row.classList.add("row");
@@ -40,27 +41,26 @@ const createCells = () => {
     }
     gameGrid.appendChild(row);
   }
-}
+};
 createCells();
 
 // Allow cells to be clickable
-let flattened;
-const flattenCells = () => {
-  console.log(cells);
-  flattened = cells.flat();
-  flattened.forEach(cell => {
-    cell.addEventListener("click", () => {
-      if (cell.classList.contains("alive")) {
-        cell.classList.remove("alive");
-        cell.classList.add("dead");
-      } else {
-        cell.classList.remove("dead");
-        cell.classList.add("alive");
-      }
-    })
-  })
-}
-flattenCells();
+const makeClickable = () => {
+  cells.forEach(row => {
+    row.map(cell => {
+      cell.addEventListener("click", () => {
+        if (cell.classList.contains("alive")) {
+          cell.classList.remove("alive");
+          cell.classList.add("dead");
+        } else {
+          cell.classList.remove("dead");
+          cell.classList.add("alive");
+        }
+      });
+    });
+  });
+};
+makeClickable();
 
 // As the styling gives the border only to the left and bottom edges of each cell so as to avoid overlapping borders, this function just adds a top border to the top row of cells and a right border to the right column of cells
 const styleOuterCells = () => {
@@ -68,9 +68,9 @@ const styleOuterCells = () => {
       row.map((cell, j) => {
         if (i === 0) cell.style.borderTop = "1px solid rgb(90, 63, 14)";
         if (j === row.length-1) cell.style.borderRight = "1px solid rgb(90, 63, 14)";
-      })
-    })
-}
+      });
+    });
+};
 styleOuterCells();
 
 const countNeighbours = (x, y) => {
@@ -93,12 +93,12 @@ const countNeighbours = (x, y) => {
   } else {    // All non-edge cells
     return [[x-1, y-1], [x, y-1], [x-1, y+1], [x-1, y], [x+1, y], [x+1, y-1], [x, y+1], [x+1, y+1]];
   }
-}
+};
 
 const checkStatus = () => {
   cells.map(row => {
     row.map(cell => {
-      let getXY = cell.dataset.position.split(",")
+      let getXY = cell.dataset.position.split(",");
       let x = Number(getXY[0]);
       let y = Number(getXY[1]);
       let neighbours = countNeighbours(x, y);
@@ -107,7 +107,7 @@ const checkStatus = () => {
         if (cells[neighbour[0]][neighbour[1]].classList.contains("alive")) {
           livingNeighbours++;
         }
-      })
+      });
       // All live cells with 2 or 3 living neighbours survives
       if (cell.classList.contains("alive") && livingNeighbours > 1 && livingNeighbours < 4) {
         // console.log(cell);
@@ -118,36 +118,36 @@ const checkStatus = () => {
         cell.classList.add("will-live");
       // Otherwise, the cell will die or stay dead
       } else cell.classList.add("will-die");
-    })
-  })
-}
+    });
+  });
+};
 
 let lastRender = 0;
 const newGeneration = currentTime => {
   if (!running) return;
   checkStatus();
   window.requestAnimationFrame(newGeneration);
-  const msSinceLastRender = currentTime - lastRender
+  const msSinceLastRender = currentTime - lastRender;
   if (msSinceLastRender < speed) return;
   lastRender = currentTime;
 
   cells.map(row => {
     row.map(cell => {
-      cell.classList.remove("alive", "dead")
+      cell.classList.remove("alive", "dead");
       if (cell.classList.contains("will-live")) {
         cell.classList.add("alive");
-      } else cell.classList.add("dead")
+      } else cell.classList.add("dead");
       cell.classList.remove("will-live", "will-die");
-    })
-  })
+    });
+  });
   numGenerations.innerHTML = generations + " generations";
   generations++;
-}
+};
 
 startBtn.addEventListener("click", () => {
   numGenerations.innerHTML = generations + " generations";
   running = true;
-  newGeneration()
+  newGeneration();
 });
 
 function pause() {
@@ -165,44 +165,48 @@ const reset = () => {
   randomlyGenerate();
   if (!running) return;
   running = false;
-}
+};
 resetBtn.addEventListener("click", reset);
 
 // Left off here, going to change number of cells based on cell size so they keep the same overall height and width
 const determineCellSize = () => {
   gameGrid.innerHTML = "";
-  let cellSize = Number(selectCellSize.value);
+  let cellSize = Number(selectCellSize.value) || 7;
   let totalWidth = 750;
 
   numColumns = parseInt(totalWidth / cellSize);
   numRows = parseInt(totalWidth / cellSize * 0.6);
 
   createCells();
-  flattenCells();
-  flattened.map(cell => {
+  makeClickable();
+  cells.forEach(row => {
+    row.map(cell => {
     cell.style.width = cellSize + "px";
     cell.style.height = cellSize + "px";
-  })
-}
+    });
+  });
+};
 
 const randomlyGenerate = (density = 0.65) => {
   generations = 0;
   numGenerations.innerHTML = generations + " generations";
-  flattened.forEach(cell => {
-    cell.classList.remove("alive", "dead");
-    if (Math.random() > density) {
-      cell.classList.add("alive");
-    } else {
-      cell.classList.add("dead");
-    }
-  })
-}
+  cells.forEach(row => {
+    row.map(cell => {
+      cell.classList.remove("alive", "dead");
+      if (Math.random() > density) {
+        cell.classList.add("alive");
+      } else {
+        cell.classList.add("dead");
+      }
+    });
+  });
+};
 generateNew.addEventListener("click", () => {
   if (running) {
     pauseBtn.classList.add("flash");
     setTimeout(() => {
       pauseBtn.classList.remove("flash");
-    }, 250)
+    }, 250);
     return;
   }
   determineCellSize();
@@ -216,8 +220,31 @@ generateNew.addEventListener("click", () => {
 
 speedRange.addEventListener("input", () => {
   speed = speedRange.value;
-})
+});
 
+const eraseAll = () => {
+  if (running) return;
+  cells.forEach(row => {
+    row.map(cell => {
+      cell.classList.remove("alive");
+      cell.classList.add("dead");
+    });
+  });
+};
+eraseBtn.addEventListener("click", eraseAll);
 
-// TODO responsive design for smaller screens
-// TODO add fill all and empty and let user know they can click cells
+const invert = () => {
+  if (running) return;
+  cells.forEach(row => {
+    row.map(cell => {
+      if (cell.classList.contains("alive")) {
+        cell.classList.remove("alive");
+        cell.classList.add("dead");
+      } else {
+        cell.classList.add("alive");
+        cell.classList.remove("dead");
+      }
+    });
+  });
+};
+invertBtn.addEventListener("click", invert);
