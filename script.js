@@ -145,6 +145,7 @@ const newGeneration = currentTime => {
 };
 
 startBtn.addEventListener("click", () => {
+  if (running) return;
   numGenerations.innerHTML = generations + " generations";
   running = true;
   newGeneration();
