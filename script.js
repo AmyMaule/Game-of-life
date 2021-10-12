@@ -50,6 +50,7 @@ const makeClickable = () => {
     row.map(cell => {
       cell.addEventListener("click", () => {
         if (cell.classList.contains("alive")) {
+          if (running) return;
           cell.classList.remove("alive");
           cell.classList.add("dead");
         } else {
