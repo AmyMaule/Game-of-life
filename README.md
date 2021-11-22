@@ -9,6 +9,10 @@ The [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) is a c
 
 ## Live version [here](https://amy-gameoflife.netlify.app/).
 
+<div align="center">
+  <img src="./game-of-life.png" width="85%">
+</div>
+
 ### Built With
 * HTML, CSS, JavaScript
 <br>
